@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequiredArgsConstructor
 public class BookController {
@@ -22,9 +24,22 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
-    @PostMapping
+    @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED)
-    public BookResponse createBook(@RequestBody @Valid BookRequest request) {
-        return bookService.create(request);
+    public BookResponse addBook(@RequestBody @Valid BookRequest request) {
+        return bookService.createBook(request);
     }
+
+    @DeleteMapping("/books/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BookResponse deleteBook(@PathVariable("id") int id) {
+        return bookService.deleteBookById(id);
+    }
+
+    @PatchMapping("/books/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BookResponse updateBookDetail(@RequestBody @Valid BookRequest request, @PathVariable("id") int id) {
+        return bookService.updateBookById(request, id);
+    }
+
 }
