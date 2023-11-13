@@ -1,16 +1,15 @@
 package com.example.bookregistryservice.service;
 
 import com.example.bookregistryservice.domain.BookRequest;
-import com.example.bookregistryservice.entity.Book;
 import com.example.bookregistryservice.domain.BookResponse;
+import com.example.bookregistryservice.dto.BookDto;
+import com.example.bookregistryservice.entity.Book;
 import com.example.bookregistryservice.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
-import com.example.bookregistryservice.dto.BookDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.net.http.HttpResponse;
 import java.util.NoSuchElementException;
 
 @Service

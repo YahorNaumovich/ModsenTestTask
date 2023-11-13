@@ -22,8 +22,7 @@ spec:
         ports:
         - containerPort: 8080
           name: book-registry
-      imagePullSecrets:
-      - name: regcred
+        imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service
