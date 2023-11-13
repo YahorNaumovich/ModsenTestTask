@@ -67,4 +67,15 @@ In Shell, switch to SQL mode and use SQL syntax like 'SHOW DATABASES'
 ```
 ## Deploy BookRegistry Service
 
+```text
+kubectl apply -f book-registry-deployment.yaml
+```
+Make sure that pod is running
+```text
+kubectl get pods
+```
+Forward service port
+```text
+kubectl port-forward service/book-registry 8080
+```
 This section is TBD.
