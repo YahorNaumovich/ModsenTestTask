@@ -65,8 +65,12 @@ In Shell, switch to SQL mode and use SQL syntax like 'SHOW DATABASES'
 | testDB             |
 +--------------------+
 ```
-## Deploy BookRegistry Service
+## Build docker image and Deploy BookRegistry Service
 
+```text
+docker build -t bookregistryservice .
+```
+Run book registry service
 ```text
 kubectl apply -f book-registry-deployment.yaml
 ```
