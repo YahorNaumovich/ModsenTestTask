@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-registry
+spec:
+  selector:
+    matchLabels:
+      app: book-registry
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: book-registry
+    spec:
+      containers:
+      - name: bookregistryservice
+        image: bookregistryservice:latest
+        env:
+        - name: MYSQL_URL_PATH
+          value: "mysql/books?useSSL=false"
+        ports:
+        - containerPort: 8080
+          name: book-registry
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-registry
+spec:
+  ports:
+  - port: 8080
+  selector:
+    app: book-registry
