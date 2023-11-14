@@ -6,6 +6,8 @@ import com.example.bookregistryservice.dto.BookDto;
 import com.example.bookregistryservice.entity.Book;
 import com.example.bookregistryservice.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -51,6 +53,15 @@ public class BookService {
             book.setDescription(request.getDescription());
         bookRepository.save(book);
         return mapper.toDto(book);
+    }
+
+    public BookResponse getBookByIsbn(String isbn){
+        Book book = bookRepository.findByIsbn(isbn).orElseThrow(BookNotFoundException::new);
+        return mapper.toDto(book);
+    }
+
+    public Page<BookResponse> getAllBooks(Pageable pageable){
+        return bookRepository.findAll(pageable).map(mapper::toDto);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Element does not exist")
