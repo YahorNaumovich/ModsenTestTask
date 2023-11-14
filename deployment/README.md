@@ -78,7 +78,7 @@ Make sure that pod is running
 ```text
 kubectl get pods
 ```
-Forward service port
+Forward service port to be able to connect to the service
 ```text
 kubectl port-forward service/book-registry 8080
 ```

@@ -22,15 +22,15 @@ public class BookController {
     @GetMapping("/books/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get book by id")
-    public BookResponse getBookDetails(@PathVariable("id") int id) {
-        return bookService.getBookById(id);
+    public BookResponse getBookDetail(@PathVariable("id") int id) {
+        return bookService.getBookDetailById(id);
     }
 
     @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new book")
     public BookResponse addBook(@RequestBody @Valid BookRequest request) {
-        return bookService.createBook(request);
+        return bookService.addNewBook(request);
     }
 
     @DeleteMapping("/books/{id}")
@@ -44,20 +44,20 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update book details")
     public BookResponse updateBookDetail(@RequestBody @Valid BookRequest request, @PathVariable("id") int id) {
-        return bookService.updateBookById(request, id);
+        return bookService.updateBookDetailById(request, id);
     }
 
     @GetMapping("/books/isbn/{isbn}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get book by isbn")
-    public BookResponse getBookDetailsByIsbn(@PathVariable("isbn") String isbn) {
-        return bookService.getBookByIsbn(isbn);
+    public BookResponse getBookDetailByIsbn(@PathVariable("isbn") String isbn) {
+        return bookService.getBookDetailByIsbn(isbn);
     }
 
-    @GetMapping("/books/all")
+    @GetMapping("/books")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all books")
-    public Page<BookResponse> getAllBooks(@PageableDefault(size = 10) @ParameterObject Pageable pageable) {
+    public Page<BookResponse> getAllBooks(@PageableDefault() @ParameterObject Pageable pageable) {
         return bookService.getAllBooks(pageable);
     }
 

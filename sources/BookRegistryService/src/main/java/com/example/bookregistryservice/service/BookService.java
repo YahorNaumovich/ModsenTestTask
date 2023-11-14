@@ -16,30 +16,36 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class BookService {
+public class BookService{
 
     private final BookRepository bookRepository;
 
-
     private final BookDto mapper;
 
-    public BookResponse getBookById(int id) {
+    public BookResponse getBookDetailById(int id) {
+        System.out.printf("getBookDetailById:start -> Id:{%d}\n", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        System.out.printf("getBookDetailById:end -> Id:{%d} Book:{%s} - OK\n", id, book.toString());
         return mapper.toDto(book);
     }
 
-    public BookResponse createBook(BookRequest request) {
+    public BookResponse addNewBook(BookRequest request) {
+        System.out.print("addNewBook:start\n");
         Book book = bookRepository.save(mapper.fromDto(request));
+        System.out.printf("addNewBook:end -> Created Book:{%s}\n", book);
         return mapper.toDto(book);
     }
 
     public BookResponse deleteBookById(int id) {
+        System.out.printf("deleteBookById:start -> Id:{%d}\n", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
         bookRepository.delete(book);
+        System.out.printf("deleteBookById:end -> Id:{%d} Book:{%s} - OK\n", id, book);
         return mapper.toDto(book);
     }
 
-    public BookResponse updateBookById(BookRequest request, int id) {
+    public BookResponse updateBookDetailById(BookRequest request, int id) {
+        System.out.printf("updateBookDetailById:start -> Id:{%d}\n", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
         if (request.getName() != null)
             book.setName(request.getName());
@@ -52,11 +58,14 @@ public class BookService {
         if (request.getDescription() != null)
             book.setDescription(request.getDescription());
         bookRepository.save(book);
+        System.out.printf("updateBookDetailById:end -> Id:{%d} - OK\n", id);
         return mapper.toDto(book);
     }
 
-    public BookResponse getBookByIsbn(String isbn){
+    public BookResponse getBookDetailByIsbn(String isbn){
+        System.out.printf("getBookDetailByIsbn:start -> Isbn:{%s}\n", isbn);
         Book book = bookRepository.findByIsbn(isbn).orElseThrow(BookNotFoundException::new);
+        System.out.printf("getBookDetailByIsbn:end -> Isbn:{%s} - OK\n", isbn);
         return mapper.toDto(book);
     }
 
