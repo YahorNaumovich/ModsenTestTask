@@ -8,9 +8,13 @@ import com.example.bookregistryservice.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.NoSuchElementException;
 
@@ -31,7 +35,15 @@ public class BookService{
 
     public BookResponse addNewBook(BookRequest request) {
         System.out.print("addNewBook:start\n");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = null;
+        try {
+            headers = restTemplate.headForHeaders("http://localhost:8081//libraries/books");
+        } catch (RestClientException e) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
+        }
         Book book = bookRepository.save(mapper.fromDto(request));
+        restTemplate.postForObject("http://localhost:8081/libraries/books/" + book.getId(), null, Book.class);
         System.out.printf("addNewBook:end -> Created Book:{%s}\n", book);
         return mapper.toDto(book);
     }
