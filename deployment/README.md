@@ -65,6 +65,7 @@ In Shell, switch to SQL mode and use SQL syntax like 'SHOW DATABASES'
 | testDB             |
 +--------------------+
 ```
+
 ## Build docker image and Deploy BookRegistry Service
 
 ```text
@@ -82,4 +83,5 @@ Forward service port to be able to connect to the service
 ```text
 kubectl port-forward service/book-registry 8080
 ```
-This section is TBD.
+=======
+## Deploy BookRegistry Service
