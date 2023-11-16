@@ -4,6 +4,7 @@ import com.example.bookregistryservice.domain.BookRequest;
 import com.example.bookregistryservice.domain.BookResponse;
 import com.example.bookregistryservice.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
 
     private final BookService bookService;
-
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/books/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get book by id")
