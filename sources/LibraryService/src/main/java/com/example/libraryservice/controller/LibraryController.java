@@ -3,6 +3,7 @@ package com.example.libraryservice.controller;
 import com.example.libraryservice.domain.LibraryRecordResponse;
 import com.example.libraryservice.service.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class LibraryController {
     private final LibraryService libraryService;
 

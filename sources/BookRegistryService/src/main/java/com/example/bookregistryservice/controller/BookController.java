@@ -2,6 +2,7 @@ package com.example.bookregistryservice.controller;
 
 import com.example.bookregistryservice.domain.BookRequest;
 import com.example.bookregistryservice.domain.BookResponse;
+import com.example.bookregistryservice.entity.User;
 import com.example.bookregistryservice.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,15 +12,22 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
+//@SecurityRequirement(name = "Bearer Authentication")
 public class BookController {
 
     private final BookService bookService;
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/books/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get book by id")
@@ -30,8 +38,8 @@ public class BookController {
     @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new book")
-    public BookResponse addBook(@RequestBody @Valid BookRequest request) {
-        return bookService.addNewBook(request);
+    public BookResponse addBook(@RequestBody @Valid BookRequest request, @AuthenticationPrincipal User user) {
+        return bookService.addNewBook(request, user.getToken());
     }
 
     @DeleteMapping("/books/{id}")
