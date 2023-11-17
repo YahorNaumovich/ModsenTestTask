@@ -50,7 +50,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         User userDetails = User.builder().token(request.getHeader(HttpHeaders.AUTHORIZATION)).build();
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(token);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
             usernamePasswordAuthenticationToken

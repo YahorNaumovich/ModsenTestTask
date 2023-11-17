@@ -45,8 +45,8 @@ public class BookController {
     @DeleteMapping("/books/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete book by id")
-    public BookResponse deleteBook(@PathVariable("id") int id) {
-        return bookService.deleteBookById(id);
+    public BookResponse deleteBook(@PathVariable("id") int id, @AuthenticationPrincipal User user) {
+        return bookService.deleteBookById(id, user.getToken());
     }
 
     @PatchMapping("/books/{id}")

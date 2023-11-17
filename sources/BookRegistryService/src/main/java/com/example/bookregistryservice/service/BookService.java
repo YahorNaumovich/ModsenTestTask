@@ -7,13 +7,12 @@ import com.example.bookregistryservice.entity.Book;
 import com.example.bookregistryservice.entity.User;
 import com.example.bookregistryservice.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,18 +33,20 @@ public class BookService {
 
     private final BookDto mapper;
 
+    Logger logger = LoggerFactory.getLogger(BookService.class);
+
     @Value("${LIBRARY_URL}")
     String LibraryServiceUrl;
 
     public BookResponse getBookDetailById(int id) {
-        System.out.printf("getBookDetailById:start -> Id:{%d}\n", id);
+        logger.info("getBookDetailById:start -> Id:{}", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
-        System.out.printf("getBookDetailById:end -> Id:{%d} Book:{%s} - OK\n", id, book.toString());
+        logger.info("getBookDetailById:end -> Id:{} Book:{} - OK", id, book);
         return mapper.toDto(book);
     }
 
     public BookResponse addNewBook(BookRequest request, String token) {
-        System.out.print("addNewBook:start\n");
+        logger.info("addNewBook:start");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RestTemplate restTemplate = new RestTemplate();
         Book book = bookRepository.save(mapper.fromDto(request));
@@ -54,27 +55,38 @@ public class BookService {
             String t = token.substring(7);
             headers.setBearerAuth(t);
             HttpEntity<Book> entity = new HttpEntity<>(null, headers);
-            System.out.println(LibraryServiceUrl);
-            restTemplate.postForObject("http://" + LibraryServiceUrl + "libraries/books/" + book.getId(), entity, Book.class);
+            String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
+            logger.info("URL for request to Library Service: {}", postUrl);
+            restTemplate.postForObject(postUrl, entity, Book.class);
         } catch (RestClientException | NullPointerException e) {
             bookRepository.delete(book);
             throw e;
         }
-        System.out.printf("addNewBook:end -> Created Book:{%s}\n", book);
+        logger.info("addNewBook:end -> Created Book:{}", book);
         return mapper.toDto(book);
     }
 
-    public BookResponse deleteBookById(int id) {
-        System.out.printf("deleteBookById:start -> Id:{%d}\n", id);
+    public BookResponse deleteBookById(int id, String token) {
+        logger.info("deleteBookById:start -> Id:{}", id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RestTemplate restTemplate = new RestTemplate();
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        HttpHeaders headers = new HttpHeaders();
+        String t = token.substring(7);
+        headers.setBearerAuth(t);
+        HttpEntity<Book> entity = new HttpEntity<>(null, headers);
+        String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
+        logger.info("URL for request to Library Service: {}", postUrl);
+        restTemplate.exchange(postUrl, HttpMethod.DELETE, entity,Book.class);
         bookRepository.delete(book);
-        System.out.printf("deleteBookById:end -> Id:{%d} Book:{%s} - OK\n", id, book);
+        logger.info("deleteBookById:end -> Id:{} Book:{} - OK", id, book);
         return mapper.toDto(book);
     }
 
     public BookResponse updateBookDetailById(BookRequest request, int id) {
-        System.out.printf("updateBookDetailById:start -> Id:{%d}\n", id);
+        logger.info("updateBookDetailById:start -> Id:{}", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        logger.info("updateBookDetailById:bookFound -> Book:{}", book);
         if (request.getName() != null)
             book.setName(request.getName());
         if (request.getIsbn() != null)
@@ -86,18 +98,19 @@ public class BookService {
         if (request.getDescription() != null)
             book.setDescription(request.getDescription());
         bookRepository.save(book);
-        System.out.printf("updateBookDetailById:end -> Id:{%d} - OK\n", id);
+        logger.info("updateBookDetailById:end -> Book:{}", book);
         return mapper.toDto(book);
     }
 
     public BookResponse getBookDetailByIsbn(String isbn) {
-        System.out.printf("getBookDetailByIsbn:start -> Isbn:{%s}\n", isbn);
+        logger.info("getBookDetailByIsbn:start -> Isbn:{}", isbn);
         Book book = bookRepository.findByIsbn(isbn).orElseThrow(BookNotFoundException::new);
-        System.out.printf("getBookDetailByIsbn:end -> Isbn:{%s} - OK\n", isbn);
+        logger.info("getBookDetailByIsbn:end -> Isbn:{} - OK", isbn);
         return mapper.toDto(book);
     }
 
     public Page<BookResponse> getAllBooks(Pageable pageable) {
+        logger.info("getAllBooks:called");
         return bookRepository.findAll(pageable).map(mapper::toDto);
     }
 

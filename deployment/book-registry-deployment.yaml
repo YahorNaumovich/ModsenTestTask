@@ -20,7 +20,7 @@ spec:
         - name: MYSQL_URL_PATH
           value: "mysql/books?useSSL=false"
         - name: LIBRARY_URL_PATH
-          value: "library/"
+          value: "library:8081/"
         ports:
         - containerPort: 8080
           name: book-registry
