@@ -1,37 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book-registry
+  name: library
 spec:
   selector:
     matchLabels:
-      app: book-registry
+      app: library
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: book-registry
+        app: library
     spec:
       containers:
-      - name: bookregistryservice
-        image: bookregistryservice
+      - name: libraryservice
+        image: libraryservice
         env:
         - name: MYSQL_URL_PATH
           value: "mysql/books?useSSL=false"
-        - name: LIBRARY_URL_PATH
-          value: "library:8081/"
         ports:
-        - containerPort: 8080
-          name: book-registry
+        - containerPort: 8081
+          name: library
         imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: book-registry
+  name: library
 spec:
   ports:
-  - port: 8080
+  - port: 8081
   selector:
-    app: book-registry
+    app: library

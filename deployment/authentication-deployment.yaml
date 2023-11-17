@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication
+spec:
+  selector:
+    matchLabels:
+      app: authentication
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+      - name: authenticationservice
+        image: authenticationservice
+        ports:
+        - containerPort: 8082
+          name: authentication
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication
+spec:
+  ports:
+  - port: 8082
+  selector:
+    app: authentication

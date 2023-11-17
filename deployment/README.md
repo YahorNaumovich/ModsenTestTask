@@ -66,6 +66,12 @@ In Shell, switch to SQL mode and use SQL syntax like 'SHOW DATABASES'
 +--------------------+
 ```
 
+Create books database
+
+```text
+ MySQL  localhost:3306  SQL > CREATE DATABASE books;
+```
+
 ## Build docker image and Deploy BookRegistry Service
 
 ```text
@@ -84,4 +90,38 @@ Forward service port to be able to connect to the service
 kubectl port-forward service/book-registry 8080
 ```
 =======
-## Deploy BookRegistry Service
+## Build docker image and Deploy Library Service
+
+```text
+docker build -t libraryservice .
+```
+Run library service
+```text
+kubectl apply -f library-deployment.yaml
+```
+Make sure that pod is running
+```text
+kubectl get pods
+```
+Forward service port to be able to connect to the service
+```text
+kubectl port-forward service/library 8081
+```
+
+## Build docker image and Deploy Authentication Service
+
+```text
+docker build -t authenticationservice .
+```
+Run authentication service
+```text
+kubectl apply -f authentication-deployment.yaml
+```
+Make sure that pod is running
+```text
+kubectl get pods
+```
+Forward service port to be able to connect to the service
+```text
+kubectl port-forward service/authentication 8082
+```
