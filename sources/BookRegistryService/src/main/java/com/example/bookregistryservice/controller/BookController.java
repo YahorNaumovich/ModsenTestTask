@@ -7,19 +7,29 @@ import com.example.bookregistryservice.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
-//@SecurityRequirement(name = "Bearer Authentication")
 public class BookController {
+
+    Logger logger = LoggerFactory.getLogger(BookController.class);
+    @Scheduled(fixedDelay = 60000, initialDelay = 60000)
+    public void logScheduledMessage(){
+        logger.info("This is a scheduled message test");
+    }
 
     private final BookService bookService;
     @GetMapping("/books/{id}")
@@ -53,7 +63,7 @@ public class BookController {
     @GetMapping("/books/isbn/{isbn}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get book by isbn")
-    public BookResponse getBookDetailByIsbn(@PathVariable("isbn") String isbn) {
+    public List<BookResponse> getBookDetailByIsbn(@PathVariable("isbn") String isbn) {
         return bookService.getBookDetailByIsbn(isbn);
     }
 
@@ -62,6 +72,13 @@ public class BookController {
     @Operation(summary = "Get all books")
     public Page<BookResponse> getAllBooks(@PageableDefault() @ParameterObject Pageable pageable) {
         return bookService.getAllBooks(pageable);
+    }
+
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Synchronize data in BookRegistryService and LibraryService")
+    public BookResponse check(@AuthenticationPrincipal User user){
+        return bookService.synchronizeBooksAndRecords(user.getToken());
     }
 
 }

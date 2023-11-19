@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,9 +45,12 @@ public class BookService {
         return mapper.toDto(book);
     }
 
+    //TODO:
+    // Implement a periodically running job in the BookRegistryService that will compare the list of books
+    // in the registry and in the LibraryService, and correct desynchronization that can occur when failures occur
+    // during distributed transactions in the BookRegistryService that calls the LibraryService
     public BookResponse addNewBook(BookRequest request, String token) {
         logger.info("addNewBook:start");
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RestTemplate restTemplate = new RestTemplate();
         Book book = bookRepository.save(mapper.fromDto(request));
         try {
@@ -67,7 +71,6 @@ public class BookService {
 
     public BookResponse deleteBookById(int id, String token) {
         logger.info("deleteBookById:start -> Id:{}", id);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RestTemplate restTemplate = new RestTemplate();
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
         HttpHeaders headers = new HttpHeaders();
@@ -76,12 +79,13 @@ public class BookService {
         HttpEntity<Book> entity = new HttpEntity<>(null, headers);
         String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
         logger.info("URL for request to Library Service: {}", postUrl);
-        restTemplate.exchange(postUrl, HttpMethod.DELETE, entity,Book.class);
+        restTemplate.exchange(postUrl, HttpMethod.DELETE, entity, Book.class);
         bookRepository.delete(book);
         logger.info("deleteBookById:end -> Id:{} Book:{} - OK", id, book);
         return mapper.toDto(book);
     }
 
+    //TODO: rewrite updateBookDetailById method without using if/else
     public BookResponse updateBookDetailById(BookRequest request, int id) {
         logger.info("updateBookDetailById:start -> Id:{}", id);
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
@@ -101,16 +105,47 @@ public class BookService {
         return mapper.toDto(book);
     }
 
-    public BookResponse getBookDetailByIsbn(String isbn) {
+    //TODO: make getBookDetailByIsbn method return list of books since multiple books can have the same ISBN
+    public List<BookResponse> getBookDetailByIsbn(String isbn) {
         logger.info("getBookDetailByIsbn:start -> Isbn:{}", isbn);
-        Book book = bookRepository.findByIsbn(isbn).orElseThrow(BookNotFoundException::new);
+        List<Book> books = bookRepository.findAllByIsbn(isbn);
         logger.info("getBookDetailByIsbn:end -> Isbn:{} - OK", isbn);
-        return mapper.toDto(book);
+        return books.stream().map(mapper::toDto).toList();
     }
 
     public Page<BookResponse> getAllBooks(Pageable pageable) {
         logger.info("getAllBooks:called");
         return bookRepository.findAll(pageable).map(mapper::toDto);
+    }
+
+    public BookResponse synchronizeBooksAndRecords(String token) {
+        logger.info("synchronizeBooksAndRecords:start");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        String t = token.substring(7);
+        headers.setBearerAuth(t);
+        HttpEntity<Book> entity = new HttpEntity<>(null, headers);
+        String postUrl = LibraryServiceUrl + "libraries";
+        logger.info("URL for request to Library Service: {}", postUrl);
+        List<Book> books = bookRepository.findAll();
+        var records = restTemplate.exchange(postUrl, HttpMethod.GET, entity, List.class).getBody();
+        Set<Integer> booksIDs = books.stream().map(Book::getId).collect(Collectors.toSet());
+        Set<Integer> recordsIDs = new HashSet<>();
+        for (Object record : records) {
+            String str = record.toString()
+                    .replace(", reservedDate=null, returnDate=null", "")
+                    .replace("{","")
+                    .replace("}","")
+                    .replace("id=","");
+            recordsIDs.add(Integer.valueOf(str));
+        }
+        booksIDs.removeAll(recordsIDs);
+        for (int idForRemoval : booksIDs){
+            bookRepository.deleteById(idForRemoval);
+            logger.info("synchronizeBooksAndRecords:IdRemoved -> {}", idForRemoval);
+        }
+        logger.info("synchronizeBooksAndRecords:end");
+        return mapper.toDto(books.get(0));
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Element does not exist")

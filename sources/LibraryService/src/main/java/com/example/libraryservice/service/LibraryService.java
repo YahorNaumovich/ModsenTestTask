@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class LibraryService {
         return mapper.toDto(libraryRecord);
     }
 
+    //TODO: add paging to getReservedRecords method
     public List<LibraryRecordResponse> getReservedRecords() {
         logger.info("getReservedRecords:start");
         List<LibraryRecord> records = libraryRepository.findAllByReservedDateIsNotNull();
@@ -44,6 +46,7 @@ public class LibraryService {
         return records.stream().map(mapper::toDto).toList();
     }
 
+    //TODO: add paging to getAvailableRecords method
     public List<LibraryRecordResponse> getAvailableRecords() {
         logger.info("getAvailableRecords:start");
         List<LibraryRecord> records = libraryRepository.findAllByReservedDateIsNull();
@@ -51,7 +54,7 @@ public class LibraryService {
         return records.stream().map(mapper::toDto).toList();
     }
 
-
+    //TODO: update method updateReserved to be able to set reservation/return dates manually
     public LibraryRecordResponse updateReserved(int id) {
         logger.info("updateReserved:start -> Id:{}", id);
         LibraryRecord libraryRecord = libraryRepository.findById(id).orElseThrow(RecordNotFoundException::new);
@@ -68,7 +71,7 @@ public class LibraryService {
         logger.info("updateReserved:end -> Id:{} - OK", id);
         return mapper.toDto(libraryRecord);
     }
-
+    //TODO: update method updateAvailable to check if book is already available (?)
     public LibraryRecordResponse updateAvailable(int id) {
         logger.info("updateAvailable:start -> Id:{}", id);
         LibraryRecord libraryRecord = libraryRepository.findById(id).orElseThrow(RecordNotFoundException::new);
@@ -91,6 +94,12 @@ public class LibraryService {
         libraryRepository.save(libraryRecord);
         logger.info("addNewAvailableBook:end -> Record:{}", libraryRecord);
         return mapper.toDto(libraryRecord);
+    }
+
+    public List<LibraryRecordResponse> getAllRecords(){
+        logger.info("getAllRecords:start");
+        List<LibraryRecord> records = libraryRepository.findAll();
+        return records.stream().map(mapper::toDto).toList();
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Element does not exist")

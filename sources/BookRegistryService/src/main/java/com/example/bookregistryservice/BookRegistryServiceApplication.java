@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 //@OpenAPIDefinition(info = @Info(title = "Books API", description = "Books API description"))
 @Configuration
+@EnableScheduling
 //@SecurityScheme(
 //        name = "Bearer Authentication",
 //        type = SecuritySchemeType.HTTP,
