@@ -28,12 +28,19 @@ public class LibraryService {
 
     public LibraryRecordResponse deleteRecord(int id) {
         logger.info("deleteRecord:start -> Id:{}", id);
+
+        //Find a record by id in Library (if not found throw RecordNotFoundException)
         LibraryRecord libraryRecord = libraryRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+
+        //if book is reserved it can't be deleted (throw ResponseStatusException 409)
         if (libraryRecord.getReservedDate() != null) {
             logger.info("deleteRecord:Conflict -> Book is reserved and can't be deleted");
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
+
+        //if book is not reserved delete its record from Library
         libraryRepository.delete(libraryRecord);
+
         logger.info("deleteRecord:end -> Id:{} - OK", id);
         return mapper.toDto(libraryRecord);
     }
@@ -41,7 +48,10 @@ public class LibraryService {
     //TODO: add paging to getReservedRecords method
     public List<LibraryRecordResponse> getReservedRecords() {
         logger.info("getReservedRecords:start");
+
+        //Find all reserved books in Library
         List<LibraryRecord> records = libraryRepository.findAllByReservedDateIsNotNull();
+
         logger.info("getReservedRecords:end");
         return records.stream().map(mapper::toDto).toList();
     }
@@ -49,7 +59,10 @@ public class LibraryService {
     //TODO: add paging to getAvailableRecords method
     public List<LibraryRecordResponse> getAvailableRecords() {
         logger.info("getAvailableRecords:start");
+
+        //Find all available books in Library
         List<LibraryRecord> records = libraryRepository.findAllByReservedDateIsNull();
+
         logger.info("getAvailableRecords:end");
         return records.stream().map(mapper::toDto).toList();
     }
@@ -57,16 +70,24 @@ public class LibraryService {
     //TODO: update method updateReserved to be able to set reservation/return dates manually
     public LibraryRecordResponse updateReserved(int id) {
         logger.info("updateReserved:start -> Id:{}", id);
+
+        //Find a library record by id for reservation
         LibraryRecord libraryRecord = libraryRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+
+        //If book is already reserved it can't be re-reserved
         if (libraryRecord.getReservedDate() != null) {
             logger.info("updateReserved:Conflict -> Book is already reserved");
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
+
+        //set books reservation and return dates
         libraryRecord.setId(id);
         Date dateRes = new Date();
         Date dateRet = new Date(dateRes.getTime() + 2678400000L);
         libraryRecord.setReservedDate(dateRes);
         libraryRecord.setReturnDate(dateRet);
+
+        //Save updated book record
         libraryRepository.save(libraryRecord);
         logger.info("updateReserved:end -> Id:{} - OK", id);
         return mapper.toDto(libraryRecord);
@@ -85,19 +106,26 @@ public class LibraryService {
 
     public LibraryRecordResponse addNewAvailableBook(int id) {
         logger.info("addNewAvailableBook:start -> Id:{}", id);
+
+        //Check if book record already exists
         boolean libraryRecordExists = libraryRepository.existsById(id);
         if (libraryRecordExists) {
             logger.info("addNewAvailableBook:Conflict -> Library record already exists");
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
+
+        //Add new record to Library
         LibraryRecord libraryRecord = new LibraryRecord(id, null, null);
         libraryRepository.save(libraryRecord);
+
         logger.info("addNewAvailableBook:end -> Record:{}", libraryRecord);
         return mapper.toDto(libraryRecord);
     }
 
     public List<LibraryRecordResponse> getAllRecords(){
         logger.info("getAllRecords:start");
+
+        //Get a list of all books (used for data synchronization)
         List<LibraryRecord> records = libraryRepository.findAll();
         return records.stream().map(mapper::toDto).toList();
     }
