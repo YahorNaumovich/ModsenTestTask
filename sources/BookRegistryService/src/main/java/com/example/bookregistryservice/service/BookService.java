@@ -166,21 +166,14 @@ public class BookService {
 
         logger.info("URL for request to Library Service: {}", postUrl);
 
-        //Get all books from Registry service
+        //Get all books from Registry service and Library service
         List<Book> books = bookRepository.findAll();
-        var records = restTemplate.exchange(postUrl, HttpMethod.GET, entity, List.class).getBody();
+        List<LinkedHashMap<String,Object>> records = restTemplate.exchange(postUrl, HttpMethod.GET, entity, List.class).getBody();
 
         //Collect books' and records' Ids to Sets
         Set<Integer> booksIDs = books.stream().map(Book::getId).collect(Collectors.toSet());
         Set<Integer> recordsIDs = new HashSet<>();
-        for (Object record : records) {
-            String str = record.toString()
-                    .replace(", reservedDate=null, returnDate=null", "")
-                    .replace("{","")
-                    .replace("}","")
-                    .replace("id=","");
-            recordsIDs.add(Integer.valueOf(str));
-        }
+        for (LinkedHashMap<String,Object> record : records) recordsIDs.add((Integer) record.get("id"));
 
         //Get ids of books that weren't deleted from registry due to a failure (if they exist)
         booksIDs.removeAll(recordsIDs);
