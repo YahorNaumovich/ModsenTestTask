@@ -1,7 +1,9 @@
 package com.example.bookregistryservice.domain;
 
-import lombok.*;
-import org.springframework.http.HttpRequest;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor

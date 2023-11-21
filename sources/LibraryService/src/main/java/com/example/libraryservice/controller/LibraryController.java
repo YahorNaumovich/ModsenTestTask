@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,6 +57,13 @@ public class LibraryController {
     @Operation(summary = "Adds new available book")
     public LibraryRecordResponse addNewAvailableBook(@PathVariable("id") int id){
         return libraryService.addNewAvailableBook(id);
+    }
+
+    @GetMapping("/libraries")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all library records")
+    public List<LibraryRecordResponse> getAllRecords(){
+        return libraryService.getAllRecords();
     }
 
 }

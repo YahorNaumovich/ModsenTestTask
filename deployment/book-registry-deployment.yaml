@@ -21,6 +21,11 @@ spec:
           value: "mysql/books?useSSL=false"
         - name: LIBRARY_URL_PATH
           value: "library:8081/"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
         ports:
         - containerPort: 8080
           name: book-registry
