@@ -8,6 +8,10 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RecordDto {
+
+    //Convert libraryRecord object to dto
     LibraryRecordResponse toDto(LibraryRecord libraryRecord);
+
+    //Convert dto to libraryRecord object
     LibraryRecord fromDto(LibraryRecordRequest libraryRecordRequest);
 }

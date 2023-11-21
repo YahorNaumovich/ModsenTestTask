@@ -18,7 +18,7 @@ spec:
         image: libraryservice
         env:
         - name: MYSQL_URL_PATH_SECOND
-          value: "mysql/records?useSSL=false"
+          value: "mysql/library?useSSL=false"
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:

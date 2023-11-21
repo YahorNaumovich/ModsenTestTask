@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @Builder(toBuilder=true)
 @Table(name = "library_records")
-
+//Library record entity
 public class LibraryRecord {
     @Id
     private int id;

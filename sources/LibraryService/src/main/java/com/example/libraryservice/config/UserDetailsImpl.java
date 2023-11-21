@@ -11,6 +11,8 @@ import java.util.Collection;
 
 @Data
 @RequiredArgsConstructor
+
+//Provides core user information
 public class UserDetailsImpl implements UserDetails {
 
     @Override

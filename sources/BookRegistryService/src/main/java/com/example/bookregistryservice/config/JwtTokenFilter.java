@@ -17,6 +17,8 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+
+//This class is used to check if the incoming request has a valid jwt and authenticate the user
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override

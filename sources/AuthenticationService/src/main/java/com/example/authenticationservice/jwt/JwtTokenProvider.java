@@ -13,12 +13,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+
 public class JwtTokenProvider {
     private static final String JWT_USERNAME = "username";
     @Value("${jwt.secret}")
     private String secretKey;
     @Value("${jwt.expiration}")
     private long validityInMinutes;
+
+    //Create a token from input string
     public String createToken(String username) {
         Claims claims = Jwts.claims().add(JWT_USERNAME, username).build();
         Date validity = Date.from(LocalDateTime.now().plusMinutes(validityInMinutes)

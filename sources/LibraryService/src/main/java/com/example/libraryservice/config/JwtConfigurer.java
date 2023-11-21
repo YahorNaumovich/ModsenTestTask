@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+
+//This class provides security configuration methods
 public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
     private final JwtTokenFilter jwtTokenFilter;
 

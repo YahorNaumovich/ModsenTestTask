@@ -69,8 +69,8 @@ In Shell, switch to SQL mode and use SQL syntax like 'SHOW DATABASES'
 Create books and records databases
 
 ```text
- MySQL  localhost:3306  SQL > CREATE DATABASE books;
- MySQL  localhost:3306  SQL > CREATE DATABASE records;
+ MySQL  localhost:3306  SQL > CREATE DATABASE registry;
+ MySQL  localhost:3306  SQL > CREATE DATABASE library;
 ```
 
 ## Build docker image and Deploy BookRegistry Service

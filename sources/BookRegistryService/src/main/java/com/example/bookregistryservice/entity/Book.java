@@ -14,6 +14,8 @@ import javax.validation.Valid;
 @Data
 @Builder(toBuilder=true)
 @Table(name = "book")
+
+//Book entity
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

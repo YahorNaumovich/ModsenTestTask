@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @Configuration
 
+//This class is used to define security configuration
 public class SecurityConfiguration {
 
     private final JwtTokenFilter jwtRequestFilter;

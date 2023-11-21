@@ -23,6 +23,8 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get authentication token")
     public ResponseEntity<Void> generateBearerToken(String username){
+
+        //Create a token
         String token = jwtTokenProvider.createToken(username);
         return ResponseEntity.ok().header(authorizationHeader, "Bearer " + token).build();
     }

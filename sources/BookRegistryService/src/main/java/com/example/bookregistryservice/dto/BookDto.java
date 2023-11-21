@@ -8,6 +8,10 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BookDto {
+
+    //Converts book object to dto
     BookResponse toDto(Book book);
+
+    //Converts dto to book object
     Book fromDto(BookRequest request);
 }

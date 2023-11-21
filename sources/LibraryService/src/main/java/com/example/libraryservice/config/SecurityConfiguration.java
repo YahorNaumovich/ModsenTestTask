@@ -19,6 +19,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 @Configuration
+
+//This class is used to define security configuration
 public class SecurityConfiguration {
 
     private final JwtConfigurer jwtConfigurer;

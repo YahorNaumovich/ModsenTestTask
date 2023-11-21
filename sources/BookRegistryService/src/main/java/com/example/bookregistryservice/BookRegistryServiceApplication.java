@@ -9,15 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-//@OpenAPIDefinition(info = @Info(title = "Books API", description = "Books API description"))
 @Configuration
 @EnableScheduling
-//@SecurityScheme(
-//        name = "Bearer Authentication",
-//        type = SecuritySchemeType.HTTP,
-//        bearerFormat = "JWT",
-//        scheme = "bearer"
-//)
 @OpenAPIDefinition(info = @Info(title = "Books API", description = "Books API description"),
         security = {@SecurityRequirement(name = "Authorization")})
 public class BookRegistryServiceApplication {

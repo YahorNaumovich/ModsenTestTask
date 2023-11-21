@@ -15,6 +15,8 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
+
+//This class contains methods for resolving token from request and validating it. Those methods are used in JwtTokenFilter
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")

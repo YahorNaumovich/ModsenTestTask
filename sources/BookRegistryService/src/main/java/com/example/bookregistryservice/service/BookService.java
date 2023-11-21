@@ -65,9 +65,12 @@ public class BookService {
             HttpHeaders headers = new HttpHeaders();
             String t = token.substring(7);
             headers.setBearerAuth(t);
+
             HttpEntity<Book> entity = new HttpEntity<>(null, headers);
             String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
+
             logger.info("URL for request to Library Service: {}", postUrl);
+
             restTemplate.postForObject(postUrl, entity, Book.class);
         } catch (Exception e) {
 
@@ -93,9 +96,12 @@ public class BookService {
         HttpHeaders headers = new HttpHeaders();
         String t = token.substring(7);
         headers.setBearerAuth(t);
+
         HttpEntity<Book> entity = new HttpEntity<>(null, headers);
         String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
+
         logger.info("URL for request to Library Service: {}", postUrl);
+
         restTemplate.exchange(postUrl, HttpMethod.DELETE, entity, Book.class);
 
         //Delete from registry. If something bad happens here, a book is deleted from library but remains in registry
@@ -119,12 +125,16 @@ public class BookService {
         //Change required fields
         if (request.getName() != null)
             book.setName(request.getName());
+
         if (request.getIsbn() != null)
             book.setIsbn(request.getIsbn());
+
         if (request.getAuthor() != null)
             book.setAuthor(request.getAuthor());
+
         if (request.getGenre() != null)
             book.setGenre(request.getGenre());
+
         if (request.getDescription() != null)
             book.setDescription(request.getDescription());
 
@@ -161,6 +171,7 @@ public class BookService {
         HttpHeaders headers = new HttpHeaders();
         String t = token.substring(7);
         headers.setBearerAuth(t);
+        
         HttpEntity<Book> entity = new HttpEntity<>(null, headers);
         String postUrl = LibraryServiceUrl + "libraries";
 
