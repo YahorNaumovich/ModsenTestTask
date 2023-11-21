@@ -12,6 +12,8 @@ import java.util.Collection;
 @AllArgsConstructor
 @Data
 @Builder
+
+//Provides core user information
 public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

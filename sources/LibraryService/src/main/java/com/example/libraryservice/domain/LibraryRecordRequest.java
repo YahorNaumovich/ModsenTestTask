@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
+//Request body for libraryRecord object
 public class LibraryRecordRequest {
     private int id;
     private Date reservedDate;

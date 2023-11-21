@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
+//Request body for book object
 public class BookRequest {
 
     private int id;

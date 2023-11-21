@@ -67,6 +67,7 @@ public class BookService {
             headers.setBearerAuth(t);
 
             HttpEntity<Book> entity = new HttpEntity<>(null, headers);
+
             String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
 
             logger.info("URL for request to Library Service: {}", postUrl);
@@ -98,6 +99,7 @@ public class BookService {
         headers.setBearerAuth(t);
 
         HttpEntity<Book> entity = new HttpEntity<>(null, headers);
+
         String postUrl = LibraryServiceUrl + "libraries/books/" + book.getId();
 
         logger.info("URL for request to Library Service: {}", postUrl);
@@ -168,11 +170,13 @@ public class BookService {
 
         //Get all book records from Library service
         RestTemplate restTemplate = new RestTemplate();
+
         HttpHeaders headers = new HttpHeaders();
         String t = token.substring(7);
         headers.setBearerAuth(t);
-        
+
         HttpEntity<Book> entity = new HttpEntity<>(null, headers);
+
         String postUrl = LibraryServiceUrl + "libraries";
 
         logger.info("URL for request to Library Service: {}", postUrl);
@@ -184,6 +188,7 @@ public class BookService {
         //Collect books' and records' Ids to Sets
         Set<Integer> booksIDs = books.stream().map(Book::getId).collect(Collectors.toSet());
         Set<Integer> recordsIDs = new HashSet<>();
+
         for (LinkedHashMap<String,Object> record : records) recordsIDs.add((Integer) record.get("id"));
 
         //Get ids of books that weren't deleted from registry due to a failure (if they exist)

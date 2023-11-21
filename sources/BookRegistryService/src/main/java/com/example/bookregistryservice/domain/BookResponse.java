@@ -6,6 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Builder
+//Response body for book object
 public class BookResponse {
 
     private int id;

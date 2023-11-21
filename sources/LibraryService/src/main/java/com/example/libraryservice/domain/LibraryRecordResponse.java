@@ -11,8 +11,11 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
+//Response body for libraryRecord object
 public class LibraryRecordResponse {
     private int id;
+
     private Date reservedDate;
+
     private Date returnDate;
 }
